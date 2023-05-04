@@ -1,1 +1,5 @@
+#logger
+logging.level:
+  web: DEBUG
+  '[com.comit.screen_squad_syndicate]': DEBUG
 
