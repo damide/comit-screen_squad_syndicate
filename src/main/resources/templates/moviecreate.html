@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="ISO-8859-1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+  <title>Screen Squad Syndicate</title>
+</head>
+<body>
+  <div class="container">
+    <div th:replace= "~{fragment/header :: header(updatemovie)}"></div>
+    <div class="jumbotron bg-light border border-info mt-3 py-4" style="min-height: 450px">
+    <h1 class="display-5">New Movie</h1>
+    <form action="/moviecreate" method="post">
+      <div class="form-group">
+        <label for="title">Title:</label>
+        <input type="text" class="form-control" id="title" name="title" placeholder= "Type in Title" required>
+      </div>
+      <div class="form-group">
+        <label for="description">Description:</label>
+        <input type="text" class="form-control" id="description" name="description" placeholder= "Type in Description" required>
+      </div>
+      <div class="form-group">
+        <label for="release">Release Date:</label>
+        <input type="date" class="form-control" id="release" name="release" required>
+      </div>    
+      <button type="submit" class="btn btn-primary mt-2" style="min-width: 100px">Save</button>
+    </form>
+    </div>
+    <div th:replace = "~{fragment/header :: scripts}"></div>
+  </div>
+</body>
+</html>
