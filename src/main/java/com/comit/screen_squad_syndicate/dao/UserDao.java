@@ -1,60 +1,65 @@
 package com.comit.screen_squad_syndicate.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import Beam.BlogPost;
-import Beam.Review;
+import com.comit.screen_squad_syndicate.dao.mapper.UserMapper;
+
 import Beam.UserBeam;
 
 @Repository
 public class UserDao {
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	List<UserBeam> users;
 	
-	public UserDao( ) {
-		this.users = new ArrayList<UserBeam>();
-		users.add(new UserBeam(1, "jdoe", "password", "jdoe@example.com", new ArrayList<Review>(), new ArrayList<BlogPost>()));
-		users.add(new UserBeam(2, "jsmith", "password", "jsmith@example.com", new ArrayList<Review>(), new ArrayList<BlogPost>()));
-		users.add(new UserBeam(3, "proberts", "password", "proberts@example.com", new ArrayList<Review>(), new ArrayList<BlogPost>()));
-		
-	}
+	@Autowired
+	JdbcTemplate jdbcTemplate;
 	
 	public List<UserBeam> listUsers() {
-		return this.users;
+		
+		String sql = "SELECT * FROM USER";
+		return jdbcTemplate.query(sql, new UserMapper());
 	}
 	
-	public synchronized void createUser(UserBeam user) {
-		int max = this.users.stream()
-				   .mapToInt(u->u.getIdUser())
-		           .max().orElse(0);
-		user.setIdUser(++max);
-		this.users.add(user);
+	public void createUser(UserBeam user) {
+		String sql = "INSERT INTO USER(USERNAME, PASSWORD, EMAIL) "
+			     + "VALUES(?,?,?,?)";
+		
+		this.jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getEmail());
+		
 	}
 	
 	public UserBeam findUser (int idUser) {
 		
-		return this.users.stream()
-		          .filter(u->u.getIdUser()== idUser)
-		             .findAny().orElse(null);
+		String sql = "SELECT * FROM USER WHERE ID_USER = ?";
+		return this.jdbcTemplate.queryForObject(sql, new UserMapper(), idUser);
 		
 	}
 	
 	public void modifyUser(UserBeam user) {
 		
-		UserBeam currentUser = this.findUser(user.getIdUser());
+		String sql = "UPDATE USER SET USERNAME = ?,EMAIL = ?, WHERE ID_USER = ?";
+		int status = this.jdbcTemplate.update(sql,user.getUsername(), user.getEmail(), user.getIdUser());
 		
-		if (currentUser != null) {
-			currentUser.setUsername(user.getUsername());
-			currentUser.setEmail(user.getEmail());
-			
+		if (status == 0) {
+			logger.error("Error while updating user", user);
 		}
 	}
 	
 	public void deleteUser(int idUser) {
-		this.users.removeIf(u->u.getIdUser()== idUser);
 		
+		String sql = "DELETE FROM USER WHERE ID_USER = ?";
+		int status = this.jdbcTemplate.update(sql,idUser);
+		
+		if (status == 0) {
+			logger.error("Error while updating user, idUser:", idUser);
+
+		}
 	}
 
 

@@ -12,6 +12,10 @@ public class UserBeam {
 	List<BlogPost> blogpost;
 	
 	
+	public UserBeam() {
+	}
+
+
 	public UserBeam(int idUser, String username, String password, String email, List<Review> reviews,
 			List<BlogPost> blogpost) {
 		super();

@@ -1,64 +1,70 @@
 package com.comit.screen_squad_syndicate.dao;
 
 
-import java.util.ArrayList;
+
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.comit.screen_squad_syndicate.dao.mapper.MovieMapper;
+
 import Beam.MovieBeam;
-import Beam.Review;
-import util.Util;
 
 @Repository
 public class MovieDao {
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     List<MovieBeam> movies;
 
-    public MovieDao() {
-    	
-    	this.movies= new ArrayList<MovieBeam>();
-    	
-        movies.add(new MovieBeam(1, "The Shawshank Redemption", "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",Util.parseDate("1994-09-23"), new ArrayList<Review>()));
-        movies.add(new MovieBeam(2, "The Godfather", "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.", Util.parseDate("1972-03-14"), new ArrayList<Review>()));
-        movies.add(new MovieBeam(3, "The Dark Knight", "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.", Util.parseDate("2008-07-18"), new ArrayList<Review>()));
-    }
+	@Autowired
+	JdbcTemplate jdbcTemplate;
+
     
     public List<MovieBeam> listMovie() {
-    	return this.movies;
+    	
+    	String sql = "SELECT * FROM MOVIE";
+		return jdbcTemplate.query(sql, new MovieMapper());
     	
     }
     
-    public synchronized void createMovie(MovieBeam movie) {
+    public void createMovie(MovieBeam movie) {
     	
-    	int max = this.movies.stream()
-    	           .mapToInt(mo->mo.getIdMovie())
-    	           .max().orElse(0);
-    	movie.setIdMovie(++max);
+    	String sql = "INSERT INTO MOVIE(TITLE, DESCRIPTION, RELEASE_DATE) "
+			     + "VALUES(?,?,?)";
     	
-    	this.movies.add(movie);
+    	this.jdbcTemplate.update(sql, movie.getTitle(), movie.getDescription(),movie.getReleaseDate());
+    	
     	
     }
     
     public MovieBeam findMovie(int idMovie) {
-    	return this.movies.stream()
-    	           .filter(u->u.getIdMovie()==idMovie)
-    	           .findAny().orElse(null);
+    	String sql = "SELECT * FROM MOVIE WHERE ID_MOVIE = ?";
+		return this.jdbcTemplate.queryForObject(sql, new MovieMapper(), idMovie);
     }
     
     public void updateMovie(MovieBeam movie) {
     	
-    	MovieBeam currentMovie = this.findMovie(movie.getIdMovie());
-    	if (currentMovie != null) {
-    		currentMovie.setTitle(movie.getTitle());
-			currentMovie.setDescription(movie.getDescription());
-    		currentMovie.setReleaseDate(movie.getReleaseDate());
+    	String sql = "UPDATE MOVIE SET TITLE = ?, DESCRIPTION = ?,RELEASE_DATE = ?, WHERE ID_MOVIE = ?";
+    	int status = this.jdbcTemplate.update(sql, movie.getTitle(), movie.getDescription(),movie.getReleaseDate(), movie.getIdMovie());
+    	
+    	if (status == 0) {
+			logger.error("Error while updating movie", movie);
     	}
     	
     }
     
     public void deleteMovie(int idMovie) {
     	
-    	this.movies.removeIf(u->u.getIdMovie()==idMovie);
+    	String sql = "DELETE FROM MOVIE WHERE ID_MOVIE = ?";
+    	int status = this.jdbcTemplate.update(sql, idMovie);
+    	
+    	if (status == 0) {
+			logger.error("Error while updating movie, idMovie:", idMovie);
+			
+    	}
     }
 }

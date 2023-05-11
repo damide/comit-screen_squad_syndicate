@@ -5,6 +5,11 @@ import java.util.List;
 
 public class MovieBeam {
 	
+	public MovieBeam() {
+		
+	}
+
+
 	int idMovie;
     String title;
     String description;
