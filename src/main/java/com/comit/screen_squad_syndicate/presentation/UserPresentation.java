@@ -1,6 +1,7 @@
 package com.comit.screen_squad_syndicate.presentation;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,11 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.comit.screen_squad_syndicate.service.UserService;
 
+import Beam.BlogPost;
+import Beam.Review;
 import Beam.UserBeam;
+import jakarta.servlet.http.HttpServletRequest;
+import util.Util;
+
+
 
 @Controller
 public class UserPresentation {
@@ -37,11 +45,57 @@ public class UserPresentation {
 		return new ModelAndView("list","users",users);
 	}
 	
-	@GetMapping("/user/{id}")
-	public ModelAndView getUserById(@PathVariable("id") int id) {
-		logger.debug("User Details Page for user with id {}", id);
-		UserBeam user = this.userService.getUserById(id);
-		return new ModelAndView("user", "user", user);
+	
+	@GetMapping("/usercreate")
+	public String newUser() {
+		logger.debug("Show new update");
+		return "usercreate";
+		
+	}
+	
+	@PostMapping("/usercreate")
+	public String createUser(HttpServletRequest req) {
+		logger.debug("Create update");
+		
+		String username = req.getParameter("username");
+		String password =req.getParameter("password");
+		String email =req.getParameter("email");
+		
+		UserBeam user = this.createUserBeam(null,username,password,email);
+		this.userService.createUser(user);
+		return "redirect:/list";
+		
+	}
+	
+	@GetMapping("/update/{id}")
+	public ModelAndView showUpdate(@PathVariable int id) {
+		logger.debug("Show Update");
+		UserBeam user = this.userService.findUser(id);
+		
+		return new ModelAndView("update", "user", user);
+	}
+	@PostMapping("/update")
+	public String modifyUser(HttpServletRequest req) {
+		logger.debug("Modify User");
+		
+		String id = req.getParameter("id");
+		String username = req.getParameter("username");
+		String email =req.getParameter("email");
+		
+		UserBeam user = this.createUserBeam(id, username, null, email);
+		this.userService.modifyUser(user);
+		return "redirect:/list";
+	}
+	@GetMapping("/delete/{id}")
+	public String deleteUser(@PathVariable int id) {
+		this.userService.deleteUser(id);
+		return "redirect:/list";
+	}
+	
+	
+	private UserBeam createUserBeam(String id, String username,String password, String email) {
+		UserBeam user = new UserBeam(Util.parseId(id),username,password,email,new ArrayList<Review>(), new ArrayList<BlogPost>());
+		return user;
 	}
 
 }

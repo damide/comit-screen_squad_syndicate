@@ -25,13 +25,36 @@ public class UserDao {
 		return this.users;
 	}
 	
-	public UserBeam getUserById(int id) {
-		for (UserBeam user : users) {
-			if (user.getIdUser() == id) {
-				return user;
-			}
+	public synchronized void createUser(UserBeam user) {
+		int max = this.users.stream()
+				   .mapToInt(u->u.getIdUser())
+		           .max().orElse(0);
+		user.setIdUser(++max);
+		this.users.add(user);
+	}
+	
+	public UserBeam findUser (int idUser) {
+		
+		return this.users.stream()
+		          .filter(u->u.getIdUser()== idUser)
+		             .findAny().orElse(null);
+		
+	}
+	
+	public void modifyUser(UserBeam user) {
+		
+		UserBeam currentUser = this.findUser(user.getIdUser());
+		
+		if (currentUser != null) {
+			currentUser.setUsername(user.getUsername());
+			currentUser.setEmail(user.getEmail());
+			
 		}
-		return null;
+	}
+	
+	public void deleteUser(int idUser) {
+		this.users.removeIf(u->u.getIdUser()== idUser);
+		
 	}
 
 

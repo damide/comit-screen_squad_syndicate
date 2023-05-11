@@ -5,16 +5,16 @@ import java.util.List;
 
 public class MovieBeam {
 	
-	int id;
+	int idMovie;
     String title;
     String description;
     Date releaseDate;
     List<Review> reviews;
-	
     
-    public MovieBeam(int id, String title, String description, Date releaseDate, List<Review> reviews) {
+    
+	public MovieBeam(int idMovie, String title, String description, Date releaseDate, List<Review> reviews) {
 		super();
-		this.id = id;
+		this.idMovie = idMovie;
 		this.title = title;
 		this.description = description;
 		this.releaseDate = releaseDate;
@@ -22,13 +22,13 @@ public class MovieBeam {
 	}
 
 
-	public int getId() {
-		return id;
+	public int getIdMovie() {
+		return idMovie;
 	}
 
 
-	public void setId(int id) {
-		this.id = id;
+	public void setIdMovie(int idMovie) {
+		this.idMovie = idMovie;
 	}
 
 
@@ -74,11 +74,11 @@ public class MovieBeam {
 
 	@Override
 	public String toString() {
-		return "MovieBeam [id=" + id + ", title=" + title + ", description=" + description + ", releaseDate="
+		return "MovieBeam [idMovie=" + idMovie + ", title=" + title + ", description=" + description + ", releaseDate="
 				+ releaseDate + ", reviews=" + reviews + "]";
 	}
+	
     
     
     
-    
-}    
+} 

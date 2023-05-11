@@ -31,8 +31,8 @@
             <td th:text="${user.email}"></td>
             <td><a th:href="@{/reviews/user/{id}(id=${user.idUser})}">Review</a></td>
             <td><a th:href="@{/blogposts/user/{id}(id=${user.idUser})}">Blogpost</a></td>
-            <td><a th:href="@{/users/edit/{id}(id=${user.idUser})}">Update</a></td>
-            <td><a th:href="@{/users/delete/{id}(id=${user.idUser})}">Delete</a></td>           
+            <td><a th:href="@{/update/} + ${user.idUser}">Update</a></td>
+            <td><a th:href="@{/delete/} + ${user.idUser}">Delete</a></td>           
           </tr>
         </tbody>
       </table>

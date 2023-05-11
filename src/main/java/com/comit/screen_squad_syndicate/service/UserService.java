@@ -20,10 +20,35 @@ public class UserService {
 	    public List<UserBeam> listUsers() {
 	        return userDao.listUsers();
 	    }
-
-	    public UserBeam getUserById(int id) {
-	        return userDao.getUserById(id);
+	    
+	    public void createUser(UserBeam user) {
+	    	this.validateUser(user);
+	    	this.userDao.createUser(user);
 	    }
+	    
+	    public UserBeam findUser(int idUser) {
+	    	return this.userDao.findUser(idUser);
+	    }
+	    
+	    public void modifyUser(UserBeam user) {
+	    	this.validateUser(user);
+	    	this.userDao.modifyUser(user);
+	    	
+	    }
+	    
+	    public void deleteUser(int idUser) {
+	    	this.userDao.deleteUser(idUser);
+	    }
+	    
+	    private void validateUser(UserBeam user) {
+			
+			if (user.getUsername().isEmpty() ||
+				user.getEmail().isEmpty()) {
+				throw new RuntimeException("Invalid User Data: " + user);
+			}		
+		}
+
+	    
 
 
 }

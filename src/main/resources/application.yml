@@ -1,5 +1,19 @@
+# Tomcat Server
+server:
+  port: 8080
+
+
 #logger
 logging.level:
   web: DEBUG
   '[com.comit.screen_squad_syndicate]': DEBUG
+
+
+spring:
+
+# Database Settings
+  datasource:
+    url: jdbc:mysql://localhost:3306/usersdb
+    username: root
+    password: Mysqldai@1234
 
